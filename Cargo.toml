@@ -1,0 +1,6 @@
+[package]
+name = "tbe"
+version = "0.1.0"
+authors = ["Sergey Shandar <sergey.shandar@gmail.com>"]
+
+[dependencies]
