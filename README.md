@@ -1,2 +1,3 @@
-# tbe
+# TBE
+
 Truncated Binary Encoding
