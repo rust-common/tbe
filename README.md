@@ -9,16 +9,16 @@ k = floorLog2(n);
 u = 2 * exp2(k) - n
 ```
 
-## Writing (MSB first)
+## Writing
 
-if `x < u` write `k` bits of `x` else add `u` to `x` and write `k + 1` bits.
+if `x < u` write `k` least significant bits of `x` else add `u` to `x` and write `k` most significant bits of `x` and then write a least significant bit of `x`.
 
-## Reading (MSB first)
+## Reading
 
 1. read `k` bits as `x`.
-2. if `u` <= `x` then read an additional bit and add it to `x` as a low bit and substract `u`.
+2. if `u` <= `x` then read an additional bit and add it to `x` as a least significant bit and substract `u`.
 
-## Examples
+## Examples (MSB first)
 
 ### n = 2
 
@@ -40,11 +40,11 @@ k = 2;
 u = 1
 ```
 
-BE|TBE| |
---|---|-|
-00|  0| |
-01| 10|u|
-10| 11| |
+BE|TBE(MSB)|TBE(LSB)| |
+--|--------|--------|-|
+00|      0X|      0X| |
+01|      10|      10|u|
+10|      11|      11| |
 
 ### n = 4
 
@@ -111,15 +111,15 @@ k = 3;
 u = 6;
 ```
 
-  BE| TBE|
-----|----|
-0000| 000|
-0001| 001|
-0010| 010|
-0011| 011|
-0100| 100|
-0101| 101|
-0110|1100|
-0111|1101|
-1000|1110|
-1001|1111|
+  BE|TBE(MSB)|TBE(LSB)|
+----|--------|--------|
+0000|    000X|    000X|
+0001|    001X|    100X|
+0010|    010X|    010X|
+0011|    011X|    110X|
+0100|    100X|    001X|
+0101|    101X|    101X|
+0110|    1100|    0110|
+0111|    1101|    0111|
+1000|    1110|    1110|
+1001|    1111|    1111|
