@@ -5,8 +5,8 @@ Truncated Binary Encoding
 https://en.wikipedia.org/wiki/Truncated_binary_encoding
 
 ```rust
-k = floorLog2(n);
-u = 2 * exp2(k) - n
+k = floor_log2(n);
+u = 2 * pow2(k) - n
 ```
 
 ## Writing
