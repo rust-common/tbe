@@ -2,6 +2,9 @@
 name = "tbe"
 version = "0.1.0"
 authors = ["Sergey Shandar"]
+description = "Truncated Binary Encoding"
+license = "Apache-2.0"
+repository = "https://github.com/rust-common/tbe"
 
 [dependencies]
 base2 = "0.2.2"
