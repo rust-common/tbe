@@ -4,3 +4,6 @@ version = "0.1.0"
 authors = ["Sergey Shandar"]
 
 [dependencies]
+base2 = "0.2.2"
+int = "0.2.10"
+bitrw = "0.6.0"
