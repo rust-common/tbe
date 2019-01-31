@@ -2,28 +2,12 @@ extern crate base2;
 extern crate int;
 extern crate bitrw;
 
-use base2::Base2;
-use int::UInt;
-use bitrw::BitRead;
-use bitrw::BitWrite;
-
 pub struct TbeStruct<T> {
     k: u8,
     u: T,
 }
 
-pub trait Tbe: Sized {
-    fn tbe(self) -> TbeStruct<Self>;
-}
-
-impl<T> Tbe for T
-    where T: Base2 + UInt
-{
-    /// ```
-    /// use tbe::Tbe;
-    ///
-    /// 3_u8.tbe();
-    /// ```
+pub trait Tbe: int::UInt + base2::Base2 {
     fn tbe(self) -> TbeStruct<Self> {
         let k = self.floor_log2();
         let ek2 = Self::exp2(k + 1);
@@ -31,24 +15,23 @@ impl<T> Tbe for T
     }
 }
 
+impl<T: int::UInt + base2::Base2> Tbe for T {}
+
 pub trait TbeRead {
-    fn read_tbe<T>(&mut self, tbe: TbeStruct<T>) -> std::io::Result<T>
-        where T: UInt;
+    fn read_tbe<T: int::UInt>(&mut self, tbe: TbeStruct<T>) -> std::io::Result<T>;
 }
 
-impl<R> TbeRead for R
-    where R: BitRead
-{
+impl TbeRead for bitrw::BitRead<'_> {
     /// ```
     /// extern crate bitrw;
     /// extern crate tbe;
     /// use tbe::Tbe;
     /// use tbe::TbeRead;
     /// use bitrw::BitRead;
-    /// use bitrw::ReadBits;
+    /// use bitrw::UseBitRead;
     /// let v = [0b0_11_01_0_0_1_u8, 0b11_0];
     /// let mut c = std::io::Cursor::new(&v);
-    /// let mut r = c.read_bits();
+    /// let mut r = c.use_bit_read();
     /// assert_eq!(r.read_tbe(1_u8.tbe()).unwrap(), 0);
     /// assert_eq!(r.read_tbe(2_u8.tbe()).unwrap(), 1);
     /// assert_eq!(r.read_tbe(2_u8.tbe()).unwrap(), 0);
@@ -58,9 +41,7 @@ impl<R> TbeRead for R
     /// assert_eq!(r.read_tbe(4_u8.tbe()).unwrap(), 0);
     /// assert_eq!(r.read_tbe(4_u8.tbe()).unwrap(), 3);
     /// ```
-    fn read_tbe<T>(&mut self, tbe: TbeStruct<T>) -> std::io::Result<T>
-        where T: UInt
-    {
+    fn read_tbe<T: int::UInt>(&mut self, tbe: TbeStruct<T>) -> std::io::Result<T> {
         let v = self.read(tbe.k)?;
         Ok(if v < tbe.u {
             v
@@ -71,21 +52,20 @@ impl<R> TbeRead for R
 }
 
 pub trait TbeWrite {
-    fn write_tbe<T>(&mut self, tbe: TbeStruct<T>, v: T) -> std::io::Result<()>
-        where T: UInt;
+    fn write_tbe<T: int::UInt>(&mut self, tbe: TbeStruct<T>, v: T) -> std::io::Result<()>;
 }
 
-impl<W> TbeWrite for W where W: BitWrite {
+impl TbeWrite for bitrw::BitWrite<'_> {
     /// ```
     /// extern crate bitrw;
     /// extern crate tbe;
     /// use tbe::Tbe;
     /// use tbe::TbeWrite;
     /// use bitrw::BitRead;
-    /// use bitrw::WriteBits;
+    /// use bitrw::UseBitWrite;
     /// let mut v = vec![];
     /// {
-    ///     std::io::Cursor::new(&mut v).write_bits(&mut|w| {
+    ///     std::io::Cursor::new(&mut v).use_bit_write(&mut|w| {
     ///         w.write_tbe(1_u8.tbe(), 0);
     ///         w.write_tbe(2_u8.tbe(), 1);
     ///         w.write_tbe(2_u8.tbe(), 0);
@@ -98,9 +78,7 @@ impl<W> TbeWrite for W where W: BitWrite {
     /// }
     /// assert_eq!(&v, &[0b10_01_00_01, 0b011]);
     /// ```
-    fn write_tbe<T>(&mut self, tbe: TbeStruct<T>, v: T) -> std::io::Result<()>
-        where T: UInt
-    {
+    fn write_tbe<T: int::UInt>(&mut self, tbe: TbeStruct<T>, v: T) -> std::io::Result<()> {
         if v < tbe.u {
             self.write(v, tbe.k)
         } else {
