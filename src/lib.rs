@@ -2,14 +2,14 @@ extern crate base2;
 extern crate int;
 extern crate bitrw;
 
-pub struct TbeStruct<T> {
+pub struct TbeStruct<T: Copy> {
     k: u8,
     u: T,
 }
 
-impl<T> TbeStruct<T> {
-    pub fn get_k(self) -> u8 { self.k }
-    pub fn get_u(self) -> T { self.u }
+impl<T: Copy> TbeStruct<T> {
+    pub fn get_k(&self) -> u8 { self.k }
+    pub fn get_u(&self) -> T { self.u }
 }
 
 pub trait Tbe: int::UInt + base2::Base2 {
