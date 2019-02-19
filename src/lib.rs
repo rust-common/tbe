@@ -7,6 +7,11 @@ pub struct TbeStruct<T> {
     u: T,
 }
 
+impl<T> TbeStruct<T> {
+    pub fn get_k(self) -> u8 { self.k }
+    pub fn get_u(self) -> T { self.u }
+}
+
 pub trait Tbe: int::UInt + base2::Base2 {
     fn tbe(self) -> TbeStruct<Self> {
         let k = self.floor_log2();
@@ -66,6 +71,7 @@ impl TbeWrite for bitrw::BitWrite<'_> {
     /// let mut v = vec![];
     /// {
     ///     std::io::Cursor::new(&mut v).use_bit_write(&mut|w| {
+    ///         w.write_tbe(0_u8.tbe(), 0);
     ///         w.write_tbe(1_u8.tbe(), 0);
     ///         w.write_tbe(2_u8.tbe(), 1);
     ///         w.write_tbe(2_u8.tbe(), 0);
@@ -73,10 +79,11 @@ impl TbeWrite for bitrw::BitWrite<'_> {
     ///         w.write_tbe(5_u8.tbe(), 1);
     ///         w.write_tbe(5_u8.tbe(), 2);
     ///         w.write_tbe(5_u8.tbe(), 3);
+    ///         w.write_tbe(256_u16.tbe(), 0).unwrap();
     ///         Ok(())
     ///     });
     /// }
-    /// assert_eq!(&v, &[0b10_01_00_01, 0b011]);
+    /// assert_eq!(&v, &[0b10_01_00_01, 0b000_0000_011, 0b0]);
     /// ```
     fn write_tbe<T: int::UInt>(&mut self, tbe: TbeStruct<T>, v: T) -> std::io::Result<()> {
         if v < tbe.u {
