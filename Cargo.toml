@@ -1,12 +1,12 @@
 [package]
 name = "tbe"
-version = "0.3.2"
+version = "0.3.3"
 authors = ["Sergey Shandar"]
 description = "Truncated Binary Encoding"
 license = "Apache-2.0"
 repository = "https://github.com/rust-common/tbe"
 
 [dependencies]
-base2 = "0.3.0"
+base2 = "0.3.1"
 int = "0.3.0"
-bitrw = "0.8.2"
+bitrw = "0.8.3"
